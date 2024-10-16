@@ -1,12 +1,11 @@
 # Password Manager Application
+![password_manager_interface.png](password_manager_interface.png)
 
 A simple password manager that allows users to:
 1. Generate random passwords using letters, numbers, and symbols.
 2. Save website, email/username, and password details into a file.
 3. Copy generated passwords to the clipboard for easy pasting.
 4. Validate user input and provide error messages for incomplete entries.
-
-![password_manager_interface.png](password_manager_interface.png)
 
 ## Features
 
