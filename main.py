@@ -137,7 +137,7 @@ def delete_input():
 
 # Main window setup
 window = Tk() # Create a new Tkinter window
-window.title("Password Manager") # Set the window title
+window.title("Password Manager by Moa Burke") # Set the window title
 window.config(padx=50, pady=50, bg=WHITE) # Configure padding and background color
 
 # Create canvas to display logo
