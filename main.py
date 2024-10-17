@@ -33,7 +33,7 @@ DEFAULT_EMAIL = "my_email@gmail.com" # Default email to be displayed in the inpu
 
 # UI Appearance Constants
 FONT_NAME = "Courier" # Font for labels and buttons
-FONT = (FONT_NAME, 10, "bold") # Default font
+FONT = (FONT_NAME, 9, "bold") # Default font
 LABEL_FONT = (FONT_NAME, 10, "bold") # Font for labels
 BUTTON_FONT = (FONT_NAME, 12, "bold") # Font for 'Add' button
 WHITE = 'white' # Background color for the UI
@@ -217,8 +217,8 @@ website_input = Entry(width=40, bg=GRAY) # Create an input field for the website
 website_input.grid(row=1, column=1)
 website_input.focus() # Set focus to the website input field
 
-email_input = Entry(width=70, bg=GRAY)  # Create an input field for the email
-email_input.grid(row=2, column=1, columnspan=2, padx=PADDING_X)
+email_input = Entry(width=40, bg=GRAY)  # Create an input field for the email
+email_input.grid(row=2, column=1, padx=PADDING_X)
 email_input.insert(0, "my_email@gmail.com") # Set a default email in the input fields
 
 password_input = Entry(width=40, bg=GRAY)  # Create an input field for the password
@@ -235,8 +235,8 @@ button_password = Button(text="Generate Password", command=generate_password, wi
 button_password.grid(row=3, column=2, pady=PADDING_Y)
 
 # Button to save data
-button_add = Button(text="ADD", command=save_data, width=41 ,bg=DARK_BLUE, fg=WHITE, font=(FONT_NAME, 12, "bold"), borderwidth=5 )
-button_add.grid(row=4, column=1, columnspan=2, pady=5)
+button_add = Button(text="ADD", command=save_data, width=23 ,bg=DARK_BLUE, fg=WHITE, font=(FONT_NAME, 12, "bold"), borderwidth=5 )
+button_add.grid(row=4, column=1, pady=5)
 
 
 # Start the Tkinter event loop
