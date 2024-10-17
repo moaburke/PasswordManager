@@ -3,16 +3,19 @@
 
 A simple password manager that allows users to:
 1. Generate random passwords using letters, numbers, and symbols.
-2. Save website, email/username, and password details into a file.
-3. Copy generated passwords to the clipboard for easy pasting.
+2. Save website, email/username, and password details into a JSON file.
+3. Copy passwords to the clipboard for easy pasting.
 4. Validate user input and provide error messages for incomplete entries.
+5. Search for saved passwords by website name.
 
 ## Features
-
-- Generates strong, random passwords.
-- Saves the password securely in a text file with easy-to-read formatting.
-- Utilizes Tkinter for the user interface with a clean and responsive design.
 - Includes functionality to generate, save, and manage multiple passwords.
+- Generates strong, random passwords.
+- Saves password data securely in a JSON file for structured and easy-to-read formatting.
+- Provides a search function to quickly retrieve saved website credentials.
+- Ensures error handling for file-related issues, like missing data files.
+- Website names are saved in title case for consistency.
+- Utilizes Tkinter for the user interface with a clean and responsive design.
 
 ## Installation
 To run this project, ensure you have Python installed on your computer. You can download Python from [python.org](https://www.python.org/).
@@ -52,10 +55,17 @@ pip install pyperclip
 6. **Copy Password to Clipboard**:
    - After generating a password, it is automatically copied to your clipboard for easy pasting into other applications.
 
-7. **Review Saved Data**:
-- The application saves the entered details in `data.txt`, which you can open using any text editor (e.g., Notepad, VSCode) to review your saved passwords.
+7. **Search Saved Data:**:
+- Use the **"Search"** button to retrieve saved credentials for a specific website. If the website exists, its email and password will be displayed, and the password will be copied to your clipboard.
 
+## Updates
+
+- **Version 1.1** (17 Oct 2024):
+  - Switched from saving data in a `.txt` file to a `JSON` file for better structure and management.
+  - Added error handling using `try-except` blocks to manage file-related issues.
+  - Enforced title case for website names to ensure consistency when saving and searching.
+  - Added a search feature to retrieve saved passwords for specific websites.
 
 **Files**:
-- Saves password data in `data.txt`.
+- Saves password data in `data.json` for structured storage.
 - Uses `logo.png` as the application logo.
