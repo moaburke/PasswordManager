@@ -2,23 +2,31 @@
 Password Manager Application
 
 Author: Moa Burke
-Date: 16 Oct 2024
+Date: 17 Oct 2024
 Description:
     This program implements a simple Password Manager using Python and Tkinter for the GUI.
     Users can generate random passwords, save name of website, email/username, and password details to a file,
-    and retrieve them later. The application ensures that no fields are left empty before saving
-    and provides an option to copy the generated password to teh clipboard.
+    retrieve them later, and copy the password to the clipboard. It ensures that no input fields are left empty before
+    saving and allows the user to set their own default email in the input field. The application also includes
+    a search functionality to find saved details for a specific website.
+    Error handling has been implemented to manage file-related issues, and website names are saved in title case to
+    ensure consistency and data retrieval.
 
-Version: 1.0
+Version: 1.1
 
 Changelog:
-    - 1.0: Initial version with core functionality (password generation, saving, and validation).
+    - 1.1:  Updated data storage to JSON format (from .txt), added try-except error handling for file operations,
+            enforced title case for website names to ensure consistency and data retrieval, and introduced a search
+            feature for retrieving saved passwords.
+    - 1.0:  Initial version with core functionality (password generation, saving, and validation).
 """
 
 from tkinter import *
 from tkinter import messagebox
 import random
+import json
 import pyperclip
+
 
 # Default Email Constant
 DEFAULT_EMAIL = "my_email@gmail.com" # Default email to be displayed in the input field
@@ -56,6 +64,41 @@ MAX_NUMBERS = 4
 # Message Box Constants
 ERROR_TITLE = "Error" #Title for error message boxes
 ERROR_MESSAGE = "Please don't leave any empty fields." # Error message
+
+def find_data():
+    """
+    Function to find and retrieve saved data (email/username and password) for a specified website.
+    It searches in the 'data.json' file, coped the password to the clipboard if found,
+    and displays the information in a message box. If no data file is found or the website
+    it nos present in the data, it shows an error message.
+    """
+
+    # Get the website name entered by the user and convert it to title case for consistency
+    website = website_input.get().title()
+
+    try:
+        # Try and open the JSON file containing saved data
+        with open("data.json", mode="r") as data_file:
+            data = json.load(data_file) # Load the data from the file
+    except FileNotFoundError:
+        # If the file does not exist, show an error message
+        messagebox.showinfo(title="Error", message="No Data File Found.")
+    else:
+        # Check if the website is in the saved data
+        if website in data:
+            # Retrieve the associated email and password
+            email = data[website]["email"]
+            password = data[website]["password"]
+
+            # Copy the password to the system clipboard for easy pasting
+            pyperclip.copy(password)
+
+            # Display the email and password in a message box
+            messagebox.showinfo(title=website, message=f"Email/Username: {email} \nPassword: {password} \n\nPassword has been copied to the clipboard.")
+
+        else:
+            # If no details are found for the entered website, show an error message
+            messagebox.showinfo(title="Error", message=f"No details for {website} exists.")
 
 
 def generate_password():
@@ -97,33 +140,44 @@ def generate_password():
 
 def save_data():
     """
-    Function to save website, email, and password information to a file.
-    Checks if all input fields are fields before saving and shows a confirmation message box.
+    Function to save website, email, and password information to a JSON file.
+    It checks if any input fields are empty before saving and shows a confirmation message.
+    If the data file exists, it updates the existing data: if not, it creates a new file.
     """
     # Get the data from the input fields
-    website = website_input.get()
-    email = email_input.get()
-    password = password_input.get()
+    website = website_input.get().title() # Convert the website name to title case
+    email = email_input.get() # Get the email from the input field
+    password = password_input.get() # Get the password from the input field
+
+    # Create a new dictionary to store the current website's details
+    new_data = { website: {
+            "email": email,
+            "password": password
+        }
+    }
 
     # Check if any of the input fields are left empty
     if len(website) == 0 or len(email) == 0 or len(password) == 0:
-        messagebox.showinfo(title=ERROR_TITLE, message=ERROR_MESSAGE) # Show error message
+        # Show error message if any field is blank
+        messagebox.showinfo(title=ERROR_TITLE, message=ERROR_MESSAGE)
     else: # All input fields has been filled out
-        # Display a confirmation dialog to verify if the user wants to save the data
-        is_ok = messagebox.askokcancel(title=website, message=f"These are the detailed entered:\n\nEmail: {email} \nPassword: {password} \n\nIs it okay to save?")
+        try:
+            # Try to open the existing JSON file and load its content
+            with open("data.json", mode="r") as data_file:
+                data = json.load(data_file) # Load the old data from the file
+        except FileNotFoundError:
+            # If data_file does not exist, create a new one with the current data
+            with open("data.json", mode="w") as data_file:
+                json.dump(new_data, data_file, indent=4)
+        else:
+            # Update old data with new data's information
+            data.update(new_data)
 
-        # If user confirms saving the data
-        if is_ok:
-            # Pad input string with spaces for consistent formatting in the saved file
-            website = website.ljust(20, ' ') # Left-align website name to 20 characters
-            email = email.ljust(35, ' ') # Left-align email to 35 characters
-            password = password.ljust(15, ' ') # Left-align password name to 15 characters
-
-            # Open the file in append mode and write the data
-            with open(DATA_FILE_PATH, mode="a") as file:
-                file.write(f"{website} | {email} | {password}\n")
-
-            # Clear the input fields after saving the data
+            # Save the updated data back to the file
+            with open("data.json", mode="w") as data_file:
+                json.dump(data, data_file, indent=4)
+        finally:
+            # Clear the input fields after the data has been saved
             delete_input()
 
 
@@ -159,25 +213,29 @@ password_label.grid(column=0, row=3)
 
 
 # Input fields (Entry Widgets)
-website_input = Entry(width=60, bg=GRAY) # Create an input field for the website name
-website_input.grid(row=1, column=1, columnspan=2)
+website_input = Entry(width=40, bg=GRAY) # Create an input field for the website name
+website_input.grid(row=1, column=1)
 website_input.focus() # Set focus to the website input field
 
-email_input = Entry(width=60, bg=GRAY)  # Create an input field for the email
+email_input = Entry(width=70, bg=GRAY)  # Create an input field for the email
 email_input.grid(row=2, column=1, columnspan=2, padx=PADDING_X)
 email_input.insert(0, "my_email@gmail.com") # Set a default email in the input fields
 
-password_input = Entry(width=32, bg=GRAY)  # Create an input field for the password
+password_input = Entry(width=40, bg=GRAY)  # Create an input field for the password
 password_input.grid(row=3, column=1)
 
 
 # Buttons
+#Button to find saved data
+button_password = Button(text="Search", command=find_data, width="18", bg=LIGHT_BLUE, fg=DARK_BLUE, font=FONT)
+button_password.grid(row=1, column=2, pady=PADDING_Y)
+
 # Button to generate password
-button_password = Button(text="Generate Password", command=generate_password,bg=LIGHT_BLUE, fg=DARK_BLUE, font=FONT)
+button_password = Button(text="Generate Password", command=generate_password, width="18", bg=LIGHT_BLUE, fg=DARK_BLUE, font=FONT)
 button_password.grid(row=3, column=2, pady=PADDING_Y)
 
 # Button to save data
-button_add = Button(text="ADD", command=save_data, width=35 ,bg=DARK_BLUE, fg=WHITE, font=(FONT_NAME, 12, "bold"),borderwidth=5 )
+button_add = Button(text="ADD", command=save_data, width=41 ,bg=DARK_BLUE, fg=WHITE, font=(FONT_NAME, 12, "bold"), borderwidth=5 )
 button_add.grid(row=4, column=1, columnspan=2, pady=5)
 
 
