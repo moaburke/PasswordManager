@@ -34,8 +34,7 @@ cd PasswordManager
 pip install pyperclip
 ```
 
-
-- ## Usage
+## Usage
 
 1. **Run the Application**:
    - Execute the Python script to launch the Password Manager interface. Make sure you have Tkinter and any required libraries installed.
