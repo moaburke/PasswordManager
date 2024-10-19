@@ -1,5 +1,7 @@
 # Password Manager Application
 ![password_manager_interface.png](password_manager_interface.png)
+![password_manager_search_password.png](password_manager_search_password.png)
+
 
 A simple password manager that allows users to:
 1. Generate random passwords using letters, numbers, and symbols.
