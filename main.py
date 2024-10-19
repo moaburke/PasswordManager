@@ -8,17 +8,23 @@ Description:
     Users can generate random passwords, save name of website, email/username, and password details to a file,
     retrieve them later, and copy the password to the clipboard. It ensures that no input fields are left empty before
     saving and allows the user to set their own default email in the input field. The application also includes
-    a search functionality to find saved details for a specific website.
+    a search functionality to find saved details for a specific website. Before saving a new password, the program
+    checks if the website already exists and prompts the user to confirm if they want to overwrite the existing password.
+    Upon successful addition of a password, a confirmation message is displayed to the user. After saving data, focus
+    is set back to the website input field for improved user experience.
     Error handling has been implemented to manage file-related issues, and website names are saved in title case to
     ensure consistency and data retrieval.
 
-Version: 1.1
+Version: 1.2
 
 Changelog:
-    - 1.1:  Updated data storage to JSON format (from .txt), added try-except error handling for file operations,
+    - 1.2 (19 Oct 2024): Added functionality to check if a password already exists for a website anf prompt the user
+            for overwrite confirmation. Additionally,implemented a confirmation message when a password is successfully added
+            and sets focus back to the website input field after saving data for better user experience.
+    - 1.1 (17 Oct 2024):  Updated data storage to JSON format (from .txt), added try-except error handling for file operations,
             enforced title case for website names to ensure consistency and data retrieval, and introduced a search
             feature for retrieving saved passwords.
-    - 1.0:  Initial version with core functionality (password generation, saving, and validation).
+    - 1.0 (16 Oct 2024):  Initial version with core functionality (password generation, saving, and validation).
 """
 
 from tkinter import *
@@ -64,6 +70,7 @@ MAX_NUMBERS = 4
 # Message Box Constants
 ERROR_TITLE = "Error" #Title for error message boxes
 ERROR_MESSAGE = "Please don't leave any empty fields." # Error message
+
 
 def find_data():
     """
@@ -170,15 +177,32 @@ def save_data():
             with open("data.json", mode="w") as data_file:
                 json.dump(new_data, data_file, indent=4)
         else:
-            # Update old data with new data's information
-            data.update(new_data)
+            # Set the default overwrite flag to true
+            overwrite = True
 
-            # Save the updated data back to the file
-            with open("data.json", mode="w") as data_file:
-                json.dump(data, data_file, indent=4)
+            # Check if the website already exists in the data
+            if website in data:
+                # Prompt the user to confirm if they want to overwrite the existing password
+                overwrite = messagebox.askokcancel(title="Overwrite Confirmation", message=f"A password for {website} already exists. Would you like to overwrite it?")
+
+            # If the user confirms to overwrite the data or if the website data is new
+            if overwrite:
+                # Update the existing data with new password information
+                data.update(new_data)
+
+                # Save the updated data back to the file
+                with open("data.json", mode="w") as data_file:
+                    json.dump(data, data_file, indent=4)
+
+                # Display a success message indicating that the password has been successfully added for the specific website
+                messagebox.showinfo(title="Password Added", message=f"Your password for {website} has been successfully added.")
+
         finally:
             # Clear the input fields after the data has been saved
             delete_input()
+
+            # Set focus to the website input field
+            website_input.focus()
 
 
 def delete_input():
